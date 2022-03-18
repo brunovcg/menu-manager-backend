@@ -5,4 +5,4 @@ class ItemsSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = Items
-    fields = "__all__"
+    exclude= ["category"]
