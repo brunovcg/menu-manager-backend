@@ -16,8 +16,17 @@ class ItemsView(APIView):
 
         items = Items.objects.all()
         serialized =  ItemsSerializer(items, many=True)
-
         return Response(serialized.data,status=status.HTTP_200_OK)
+
+
+    def post(self, request):
+        serialized = ItemsSerializer(data=request.data)
+        if serialized.is_valid():
+            serialized.save()
+            return  Response(serialized.data, status=status.HTTP_201_CREATED)
+
+        else:   
+            return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ItemsDetailView(APIView):
@@ -32,8 +41,3 @@ class ItemsDetailView(APIView):
 
     return Response({"Message":"atualizou item"},status=status.HTTP_200_OK)
 
-
-
-  def post(self, request, item_id=""):
-
-    return Response({"Message":"criou item"},status=status.HTTP_201_CREATED)

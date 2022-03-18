@@ -6,5 +6,5 @@ class Categories (models.Model):
     categoryId = models.CharField(max_length=255, unique=True, null=False)
     description = models.CharField(max_length=255)
     active = models.BooleanField(null=False)
-    position = models.BooleanField(null=False)
+    position = models.IntegerField(null=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="categories")

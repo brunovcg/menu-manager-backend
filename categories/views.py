@@ -5,7 +5,8 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from categories.models import Categories
-from categories.serializers import CategoriesSerializer
+from categories.serializers import CategoriesSerializer, CategoriesWithItemsSerializer
+from django.db import IntegrityError
 
 
 class CategoriesView(APIView):
@@ -15,9 +16,24 @@ class CategoriesView(APIView):
     def get(self, request):
 
         categories = Categories.objects.all()
-        serialized =  CategoriesSerializer(categories, many=True)
+        serialized =  CategoriesWithItemsSerializer(categories, many=True)
 
         return Response(serialized.data,status=status.HTTP_200_OK)
+
+
+
+    def post(self, request):
+
+
+        serialized = CategoriesSerializer(data=request.data)
+        if serialized.is_valid():
+            serialized.save()
+            return  Response(serialized.data, status=status.HTTP_201_CREATED)
+
+        else:   
+            return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
+
+   
 
 
 class CategoriesDetailView(APIView):
@@ -29,7 +45,7 @@ class CategoriesDetailView(APIView):
       return Response({"message" : "delete category"},status=status.HTTP_200_OK)
 
 
-    def post(self, request, category_id=""):
+    def patch(self, request, category_id=""):
 
-      return Response({"message" : "post category"},status=status.HTTP_200_OK)
+      return Response({"message" : "patch category"},status=status.HTTP_200_OK)
 

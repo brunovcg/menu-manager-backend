@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from accounts.models import User
+from categories.serializers import CategoriesWithItemsSerializer
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -15,3 +16,11 @@ class UserSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField()
+
+class UserGetAllSerializer(serializers.ModelSerializer):
+
+  categories = CategoriesWithItemsSerializer(many=True)
+  class Meta:
+   model = User
+   fields = ['id','username', 'email', 'is_superuser', "categories"]
+   

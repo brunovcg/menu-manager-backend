@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from accounts.models import User
 from rest_framework import status
 from django.db import IntegrityError
-from .serializers import UserSerializer
+from .serializers import UserSerializer, UserGetAllSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
@@ -26,7 +26,7 @@ class LoginView(APIView):
 
             user_logged = User.objects.get(username=username)
 
-            if user_logged.is_superuser and user_logged.is_staff:
+            if user_logged.is_superuser:
                 user_type = 'superuser'
             else:
                 user_type="user"
@@ -57,8 +57,8 @@ class SignupView(APIView):
 
 
 class UserView(APIView):
-    # authentication_classes = [TokenAuthentication]
-    # permission_classes = [IsSuperuser]
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsSuperuser]
 
 
     def get(self,request):
@@ -76,7 +76,7 @@ class UserDetailView(APIView):
     def get(self,request, user_id=""):
 
         user = get_object_or_404(User, id=user_id)
-        serialized = UserSerializer(user)
+        serialized = UserGetAllSerializer(user)
 
         return Response(serialized.data,status=status.HTTP_200_OK)
 
