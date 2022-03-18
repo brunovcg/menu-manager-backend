@@ -1,4 +1,5 @@
 from django.db import models
+from accounts.models import User
 class Categories (models.Model):
 
     category = models.CharField(max_length=255, null=False)
@@ -6,4 +7,4 @@ class Categories (models.Model):
     description = models.CharField(max_length=255)
     active = models.BooleanField(null=False)
     position = models.BooleanField(null=False)
-    user = models.ForeignKey('user.Users', on_delete=models.CASCADE, related_name="categories")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="categories")

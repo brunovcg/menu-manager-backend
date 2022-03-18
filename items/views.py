@@ -20,7 +20,7 @@ class ItemsView(APIView):
         return Response(serialized.data,status=status.HTTP_200_OK)
 
 
-class ItemsViewDetail(APIView):
+class ItemsDetailView(APIView):
 
 
   def delete(self, request, item_id=""):

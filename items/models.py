@@ -6,4 +6,4 @@ class Items (models.Model):
     desc = models.CharField(max_length=255)
     active = models.BooleanField(null=False)
     position = models.BooleanField(null=False)
-    category = models.ForeignKey('category.Categories', on_delete=models.CASCADE, related_name="items")
+    category = models.ForeignKey('categories.Categories', on_delete=models.CASCADE, related_name="items")
