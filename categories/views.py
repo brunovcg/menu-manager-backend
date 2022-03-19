@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from categories.models import Categories
 from categories.serializers import CategoriesSerializer, CategoriesWithItemsSerializer
-from django.db import IntegrityError
+
 
 
 class CategoriesView(APIView):
@@ -17,26 +17,20 @@ class CategoriesView(APIView):
 
         categories = Categories.objects.all()
         serialized =  CategoriesWithItemsSerializer(categories, many=True)
-
+#
         return Response(serialized.data,status=status.HTTP_200_OK)
 
 
 
     def post(self, request):
-
-        print(request.data["user"])
-
-
+  
         serialized = CategoriesSerializer(data=request.data)
-
-       
 
         if request.user.id  != request.data["user"] and request.user.is_superuser == False:
           return  Response({"message" : "Only superusers can post for others"}, status=status.HTTP_401_UNAUTHORIZED)
 
-
         if serialized.is_valid():
-            # serialized.save()
+            serialized.save()
             return  Response(serialized.data, status=status.HTTP_201_CREATED)
 
         else:   
@@ -44,15 +38,30 @@ class CategoriesView(APIView):
 
 
 class CategoriesDetailView(APIView):
-    # authentication_classes = [TokenAuthentication]
-    # permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def delete(self, request, category_id=""):
 
-      return Response({"message" : "delete category"},status=status.HTTP_200_OK)
+      category = get_object_or_404(Categories,id=category_id)
+
+      if request.user.id  != category.user.id and request.user.is_superuser == False:
+          return  Response({"message" : "Only superusers can delete for others"}, status=status.HTTP_401_UNAUTHORIZED)
+
+      category.delete()
+
+      return Response({"message" : f"category {category_id} deleted"},status=status.HTTP_200_OK)
 
 
     def patch(self, request, category_id=""):
 
-      return Response({"message" : "patch category"},status=status.HTTP_200_OK)
+      if not request.data:
+        return Response({"message": "You sent no options to update"},status=status.HTTP_400_BAD_REQUEST)
+
+      category = get_object_or_404(Categories, id= category_id)
+      serialized = CategoriesWithItemsSerializer(category, request.data, partial=True)
+      if serialized.is_valid():
+        serialized.save()
+
+      return Response(serialized.data,status=status.HTTP_200_OK)
 

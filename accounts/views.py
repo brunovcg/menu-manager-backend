@@ -5,6 +5,10 @@ from rest_framework.response import Response
 from accounts.models import User
 from rest_framework import status
 from django.db import IntegrityError
+from categories.models import Categories
+
+from categories.serializers import CategoriesSerializer
+from items.serializers import ItemsWithCategorySerializer
 from .serializers import UserSerializer, UserGetAllSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
@@ -37,8 +41,8 @@ class LoginView(APIView):
 
 
 class SignupView(APIView):
-    # authentication_classes = [TokenAuthentication]
-    # permission_classes = [IsSuperuser]
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsSuperuser]
 
     def post(self, request):
 
@@ -70,8 +74,8 @@ class UserView(APIView):
 
 
 class UserDetailView(APIView):
-    # authentication_classes = [TokenAuthentication]
-    # permission_classes = [IsSuperuser]
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsSuperuser]
 
     def get(self,request, user_id=""):
 
@@ -117,8 +121,8 @@ class UserDetailView(APIView):
 
 
 class ResetPasswordView(APIView):
-    # authentication_classes = [TokenAuthentication]
-    # permission_classes = [IsSuperuser]
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsSuperuser]
 
     def patch(self,request):
 
@@ -129,8 +133,8 @@ class ResetPasswordView(APIView):
         return Response({"message" : "Password Reseted"}, status=status.HTTP_200_OK)
 
 class ChangePasswordView(APIView):
-    # authentication_classes = [TokenAuthentication]
-    # permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     def patch(self,request, user_id=""):
 
         user_logged = request.user.id
@@ -147,4 +151,46 @@ class ChangePasswordView(APIView):
         user.save()
 
         return Response({"message" : "Password Updated"}, status=status.HTTP_200_OK)
+
+
+# class MassiveLoadView(APIView):
+#   authentication_classes = [TokenAuthentication]
+#   permission_classes = [IsSuperuser]
+
+#   def post(self, request):
+
+    
+
+
+#     for category in request.data:
+#       serialized = CategoriesSerializer(
+#         category= category["category"],   
+#         categoryId = category["categoryId"], 
+#         description = category["description"],
+#         active = category["active"],
+#         position = category["position"],
+#         )
+
+#       if serialized.is_valid():
+#             serialized.save()
+
+#       this_category = Categories.objects.filter(categoryId = category.categoryId)[0]
+
+#       for item in request.data["items"]:
+#         serializedItem = ItemsWithCategorySerializer(
+#           title= item["title"], item_id=item["itemId"], desc = item["desc"], 
+#           active = item["active"],
+#           position = item["position"], category = this_category
+#         )
+
+#       if serializedItem.is_valid():
+#         serializedItem.save()
+
+#       user = get_object_or_404(User, id=user_id)
+
+#       print(user)
+
+
+#     return Response({"message" : "teste"}, status=status.HTTP_201_CREATED)
+
 
