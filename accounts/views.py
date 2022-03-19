@@ -13,7 +13,7 @@ from .serializers import UserSerializer, UserGetAllSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
-from accounts.permissions import IsSuperuser
+from accounts.permissions import IsSuperuser, IsSuperuserAllowGetForAll
 from accounts.models import User
 
 class LoginView(APIView):
@@ -75,7 +75,7 @@ class UserView(APIView):
 
 class UserDetailView(APIView):
     authentication_classes = [TokenAuthentication]
-    permission_classes = [IsSuperuser]
+    permission_classes = [IsSuperuserAllowGetForAll]
 
     def get(self,request, user_id=""):
 
