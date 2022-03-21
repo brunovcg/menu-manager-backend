@@ -153,44 +153,53 @@ class ChangePasswordView(APIView):
         return Response({"message" : "Password Updated"}, status=status.HTTP_200_OK)
 
 
-# class MassiveLoadView(APIView):
-#   authentication_classes = [TokenAuthentication]
-#   permission_classes = [IsSuperuser]
+class MassiveLoadView(APIView):
+  authentication_classes = [TokenAuthentication]
+  permission_classes = [IsSuperuser]
 
-#   def post(self, request):
+  def post(self, request, user_id = ""):
 
+    destroyCategory = Categories.objects.filter(user = user_id)
+    destroyCategory.delete()
+
+    for category in request.data:
+
+      eachCategory = {
+        "category": category["category"],   
+        "description": category["description"],
+        "active": category["active"],
+        "position" : category["position"],
+        "user" : user_id
+
+      }
+
+      serialized = CategoriesSerializer( data = eachCategory
+        
+        )
+
+      if serialized.is_valid():
+           category_id = serialized.save()
+
+           for item in category["items"]:
+             eachItem = {
+               "title" : item["title"],
+               "desc" : item["desc"],
+               "active" : item["active"],
+               "position" : item["position"],
+               "price" : item["price"],
+               "category" : category_id.id,
+             }
+
+             item_serialized = ItemsWithCategorySerializer(data= eachItem)
+
+             if item_serialized.is_valid():
+                category_id = item_serialized.save()
+
+    user = User.objects.filter(id = user_id)
+
+    user_serialized = UserGetAllSerializer(user, many=True)
     
 
-
-#     for category in request.data:
-#       serialized = CategoriesSerializer(
-#         category= category["category"],   
-#         categoryId = category["categoryId"], 
-#         description = category["description"],
-#         active = category["active"],
-#         position = category["position"],
-#         )
-
-#       if serialized.is_valid():
-#             serialized.save()
-
-#       this_category = Categories.objects.filter(categoryId = category.categoryId)[0]
-
-#       for item in request.data["items"]:
-#         serializedItem = ItemsWithCategorySerializer(
-#           title= item["title"], item_id=item["itemId"], desc = item["desc"], 
-#           active = item["active"],
-#           position = item["position"], category = this_category
-#         )
-
-#       if serializedItem.is_valid():
-#         serializedItem.save()
-
-#       user = get_object_or_404(User, id=user_id)
-
-#       print(user)
-
-
-#     return Response({"message" : "teste"}, status=status.HTTP_201_CREATED)
+    return Response({"message" : "done", "data" : user_serialized.data}, status=status.HTTP_201_CREATED)
 
 

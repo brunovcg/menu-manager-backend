@@ -26,14 +26,18 @@ class CategoriesView(APIView):
   
         serialized = CategoriesSerializer(data=request.data)
 
+  
+
         if request.user.id  != request.data["user"] and request.user.is_superuser == False:
           return  Response({"message" : "Only superusers can post for others"}, status=status.HTTP_401_UNAUTHORIZED)
 
+        
         if serialized.is_valid():
             serialized.save()
             return  Response(serialized.data, status=status.HTTP_201_CREATED)
 
         else:   
+
             return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

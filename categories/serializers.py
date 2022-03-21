@@ -16,4 +16,4 @@ class CategoriesWithItemsSerializer(serializers.ModelSerializer):
 
     class Meta:
       model = Categories
-      exclude=["user"]
+      fields = "__all__"
