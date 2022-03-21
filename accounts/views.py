@@ -173,33 +173,32 @@ class MassiveLoadView(APIView):
 
       }
 
-      serialized = CategoriesSerializer( data = eachCategory
-        
-        )
+      serialized = CategoriesSerializer( data = eachCategory)
+
+      category_id = 0
 
       if serialized.is_valid():
            category_id = serialized.save()
 
-           for item in category["items"]:
-             eachItem = {
-               "title" : item["title"],
-               "desc" : item["desc"],
-               "active" : item["active"],
-               "position" : item["position"],
-               "price" : item["price"],
-               "category" : category_id.id,
-             }
+      for item in category["items"]: 
+        eachItem = {
+          "title" : item["title"],
+          "desc" : item["desc"],
+          "active" : item["active"],
+          "position" : item["position"],
+          "price" : item["price"],
+          "category" : category_id.id,
+        }
 
-             item_serialized = ItemsWithCategorySerializer(data= eachItem)
+        item_serialized = ItemsWithCategorySerializer(data= eachItem)
 
-             if item_serialized.is_valid():
-                category_id = item_serialized.save()
+        if item_serialized.is_valid():
+           item_serialized.save()
 
     user = User.objects.filter(id = user_id)
 
     user_serialized = UserGetAllSerializer(user, many=True)
     
-
     return Response({"message" : "done", "data" : user_serialized.data}, status=status.HTTP_201_CREATED)
 
 
