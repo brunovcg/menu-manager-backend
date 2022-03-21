@@ -41,8 +41,8 @@ class LoginView(APIView):
 
 
 class SignupView(APIView):
-    # authentication_classes = [TokenAuthentication]
-    # permission_classes = [IsSuperuser]
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsSuperuser]
 
     def post(self, request):
 
